@@ -12,43 +12,38 @@ public class BowlingScoreKeeping : MonoBehaviour
 
     void Start()
     {
-        numPlayers = 0;
+        CreatePlayerFrameHistories();
+    }
+    void CreatePlayerFrameHistories()
+    {
         playerScore = new BowlingPlayerFrameHistory[numPlayers];
         for (int i = 0; i < numPlayers; i++)
         {
             playerScore[i] = new BowlingPlayerFrameHistory();
         }
     }
-
     void Update()
     {
-        
+        BowlingPlayerFrameHistory history = new BowlingPlayerFrameHistory();
     }
 
-    public int CalculateBowl (GameObject player)
+    public void UpdateLane()
+    {
+      
+    }
+
+    public int CalculateScore (GameObject player)
     {
         int newBowl = 0;
         for (int i = 0; i < bowlingPins.Length; i++)
         {
-            if (bowlingPins[i].GetStandingStatus())
+            if (bowlingPins[i].GetLaneStatus() && !bowlingPins[i].GetStandingStatus())
             {
                 newBowl +=1;
             }
         }
         return newBowl;
     }
-    
-    public int CalculateBowl(GameObject player, int lastBowl)
-        {
-            for (int i = 0; i < bowlingPins.Length; i++)
-            {
-                if (bowlingPins[i].GetStandingStatus())
-                {
-                    lastBowl += 1;
-                }
-            }
-            return lastBowl;
-        }
 
 
     private void UpdateScore(GameObject player)
