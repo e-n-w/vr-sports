@@ -154,8 +154,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4878277a3ddccc743a62e170e2e6fbb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  courtWidth: 0
-  courtLength: 0
+  tennisManager: {fileID: 1524214451}
+  hasBeenServed: 0
+  server: 0
+  court: {fileID: 2063616416}
+  courtWidth: 8
+  courtLength: 23
 --- !u!135 &14916934
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -696,6 +700,51 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1087505119}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1524214450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1524214452}
+  - component: {fileID: 1524214451}
+  m_Layer: 0
+  m_Name: Tennis Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1524214451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1524214450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd80bec3a9f28841b83e019e968b8b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ball: {fileID: 14916932}
+--- !u!4 &1524214452
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1524214450}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -197.53732, y: -237.98071, z: 377.9987}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1781980528
 GameObject:
   m_ObjectHideFlags: 0
@@ -824,7 +873,7 @@ GameObject:
   - component: {fileID: 2063616418}
   - component: {fileID: 2063616417}
   m_Layer: 0
-  m_Name: Court (1)
+  m_Name: Court
   m_TagString: TennisCourt
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
