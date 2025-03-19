@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class TennisBall : MonoBehaviour
 {
-    private bool isInPlay;
-    private bool hasBeenServed;
+    [SerializeField]
+    private TennisManager tennisManager;
 
-    private int server;
+    private bool isInHand = true;
+    public bool hasBeenServed = false;
+
+    public int server;
     private int previousHit;
+    private bool previousHitWasRacket;
+
+    [SerializeField]
+    private GameObject court;
 
     [SerializeField]
     private float courtWidth;
@@ -30,23 +37,62 @@ public class TennisBall : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (!isInPlay) 
+        if (isInHand) 
         {
             return; 
         }
         if (!hasBeenServed) 
         {
+            if(collision.gameObject.tag == "TennisRacket")
+            {
+                previousHit = server;
+                previousHitWasRacket = true;
+            }
+
             // Return the ball to the serving player
+
+
             return;
         }
 
-        if (collision.gameObject.tag == "")
+        if (collision.gameObject.tag == "TennisCourt")
         {
-            
+            previousHitWasRacket = false;
+            Vector3 point = collision.GetContact(0).point;
+            Vector3 courtOrigin = court.transform.position;
+            if (point.x < courtOrigin.x + courtLength / 2 && point.x > courtOrigin.x - courtLength / 2 && point.y < courtOrigin.y + courtWidth / 2 && point.y > courtOrigin.y - courtWidth / 2)
+            {
+                if(previousHit == 0 && point.x >= 0)
+                {
+                    tennisManager.ScorePoint(1);
+                }
+                else if(previousHit == 1 && point.x < 0)
+                {
+                    tennisManager.ScorePoint(0);
+                }
+                else
+                {
+                    previousHit = point.x > 0 ? 0 : 1;
+                }
+            }
+            else
+            {
+                tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
+            }
+        }
+        else if (collision.gameObject.tag == "TennisRacket")
+        {
+            previousHitWasRacket = true;
+            int playerId = collision.gameObject.GetComponent<TennisRacket>().PlayerId;
+            if (playerId == previousHit && previousHitWasRacket)
+            {
+                tennisManager.ScorePoint(playerId == 0 ? 1 : 0);
+            }
         }
         else if(collision.gameObject.tag == "TennisLava" || collision.gameObject.tag == "TennisNet")
         {
-
+            previousHitWasRacket = false;
+            tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
         }
 
     }
