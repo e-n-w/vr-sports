@@ -6,11 +6,14 @@ public class TennisBall : MonoBehaviour
 {
     [SerializeField]
     private TennisManager tennisManager;
-
+    [SerializeField]
     private bool isInHand = true;
+
     public bool hasBeenServed = false;
 
     public int server;
+
+    [SerializeField]
     private int previousHit;
     private bool previousHitWasRacket;
 
@@ -43,7 +46,7 @@ public class TennisBall : MonoBehaviour
         }
         if (!hasBeenServed) 
         {
-            if(collision.gameObject.tag == "TennisRacket")
+            if(collision.gameObject.CompareTag("TennisRacket"))
             {
                 previousHit = server;
                 previousHitWasRacket = true;
@@ -55,7 +58,7 @@ public class TennisBall : MonoBehaviour
             return;
         }
 
-        if (collision.gameObject.tag == "TennisCourt")
+        if (collision.gameObject.CompareTag("TennisCourt"))
         {
             previousHitWasRacket = false;
             Vector3 point = collision.GetContact(0).point;
@@ -80,7 +83,7 @@ public class TennisBall : MonoBehaviour
                 tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
             }
         }
-        else if (collision.gameObject.tag == "TennisRacket")
+        else if (collision.gameObject.CompareTag("TennisRacket"))
         {
             previousHitWasRacket = true;
             int playerId = collision.gameObject.GetComponent<TennisRacket>().PlayerId;
@@ -89,11 +92,10 @@ public class TennisBall : MonoBehaviour
                 tennisManager.ScorePoint(playerId == 0 ? 1 : 0);
             }
         }
-        else if(collision.gameObject.tag == "TennisLava" || collision.gameObject.tag == "TennisNet")
+        else if(collision.gameObject.CompareTag("TennisLava") || collision.gameObject.CompareTag("TennisNet"))
         {
             previousHitWasRacket = false;
             tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
         }
-
     }
 }

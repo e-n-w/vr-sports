@@ -7,8 +7,8 @@ public class TennisManager : MonoBehaviour
     [SerializeField]
     private GameObject ball;
 
-    private int player1Score = 0;
-    private int player2Score = 0;
+    public int player1Score = 0;
+    public int player2Score = 0;
 
     // Start is called before the first frame update
     void Start()
