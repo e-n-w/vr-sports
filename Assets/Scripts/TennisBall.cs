@@ -1,21 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class TennisBall : MonoBehaviour
 {
     [SerializeField]
     private TennisManager tennisManager;
-    [SerializeField]
-    private bool isInHand = true;
 
+    public bool isInHand = true;
     public bool hasBeenServed = false;
-
-    public int server;
 
     [SerializeField]
     private int previousHit;
-    private bool previousHitWasRacket;
+    public bool previousHitWasRacket;
 
     [SerializeField]
     private GameObject court;
@@ -25,11 +23,13 @@ public class TennisBall : MonoBehaviour
     [SerializeField]
     private float courtLength;
 
+    private Rigidbody rb;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = gameObject.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -40,15 +40,11 @@ public class TennisBall : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (isInHand) 
-        {
-            return; 
-        }
         if (!hasBeenServed) 
         {
             if(collision.gameObject.CompareTag("TennisRacket"))
             {
-                previousHit = server;
+                previousHit = tennisManager.Server;
                 previousHitWasRacket = true;
             }
 
@@ -97,5 +93,17 @@ public class TennisBall : MonoBehaviour
             previousHitWasRacket = false;
             tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
         }
+    }
+
+    public void OnSelected(SelectEnterEventArgs args)
+    {
+        isInHand = true;
+        rb.isKinematic = true;
+    }
+
+    public void OnDeselect(SelectExitEventArgs args)
+    {
+        isInHand = false;
+        rb.isKinematic = false;
     }
 }
