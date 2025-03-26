@@ -13,7 +13,7 @@ public class BowlingManager : MonoBehaviour
     [SerializeField] private float laneDistance = 720f, laneWidthPerRow = 10.375f, extraLaneDepthPerRow = 8.5468f, gutterDepth = 1.875f, gutterWidth = 9.25f, pinDistance = 12f, orthogonalPinDistance;
     [SerializeField] private int numPlayers, numPins = 10;
     [SerializeField] private List<GameObject> bowlingPins;
-    [SerializeField] private GameObject pinPrefab;
+    [SerializeField] private GameObject pinPrefab, gutterLeft, gutterRight, localPlayer;
     private BowlingPlayerFrameHistory[] playerScore;
     
 
@@ -57,9 +57,9 @@ public class BowlingManager : MonoBehaviour
    
     void SpacePins() 
 
-    //Note: this also sizes the bowling lane
+        //Note: this will also size the bowling lane
         //Pins are spaced in an equilateral triangle so this janky method should allow for spacing and pin count alterations
-        //The pin asset i used is oriented sideways and I used Y instead of Z to reflect this
+        //The pin asset I used is oriented sideways and I used Y instead of Z to reflect this
     {
         float relativeX = 0, relativeY = 0, leftBound = 0;
         int pinInRow = 1, row = 1;
@@ -78,6 +78,9 @@ public class BowlingManager : MonoBehaviour
             relativeX += pinDistance;
             pinInRow++;
         }
+        gutterLeft.transform.position = new Vector3(-laneWidthPerRow * row / 2, 0, 0);
+        gutterRight.transform.position = new Vector3(laneWidthPerRow * row / 2, 0, 0);
+
 
 
 
@@ -103,7 +106,7 @@ public class BowlingManager : MonoBehaviour
 
     private void UpdateScore(GameObject player)
     {
-
+        
     }
 }
 
