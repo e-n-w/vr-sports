@@ -1,18 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class BowlingPinBehaviour : MonoBehaviour
 {
-    private bool isStanding;
-    private bool isOnLane;
-    
-    public bool GetStandingStatus()
+   [SerializeField] public bool isStanding { get; private set; } 
+    public bool isOnLane{ get; private set;}
+
+    private void Start()
     {
-        return isStanding;
+        isStanding = true;
     }
-    public bool GetLaneStatus()
+
+
+    public void OnTriggerEnter(Collider other)
     {
-        return isOnLane;
+        if(other.CompareTag("BowlingLane") && isStanding)
+        {
+            Debug.Log("Fallen Over");
+            isStanding = false;
+        }
     }
 }
+
+
