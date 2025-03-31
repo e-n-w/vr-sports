@@ -10,7 +10,7 @@ public class BowlingManager : MonoBehaviour
     // a four row lane has a width of 41.5 inches, so I will use it to scale each additional row
     // Pin distance is scaled within the spacing method
     
-    [SerializeField] private float laneDistance = 720f, laneWidthPerRow = 10.375f, extraLaneDepthPerRow = 8.5468f, gutterDepth = 1.875f, gutterWidth = 9.25f, pinDistance = 12f, orthogonalPinDistance;
+    [SerializeField] private float laneDistance = 720f, laneWidthPerRow = 10.375f, extraLaneDepthPerRow = 8.5468f, gutterDepth = 1.875f, gutterWidth = 9.25f, pinDistance = 12f, orthogonalPinDistance, scalar = 1f;
     [SerializeField] private int numPlayers, numPins = 10;
     [SerializeField] private List<GameObject> bowlingPins;
     [SerializeField] private GameObject pinPrefab, gutterLeft, gutterRight, localPlayer;
@@ -20,8 +20,10 @@ public class BowlingManager : MonoBehaviour
     void Start()
     {
         CreatePlayerFrameHistories();
-        CalculatePinDistanceOrthogonality();
+        
         InstantiatePins();
+        ScalePinDistance(.5f);
+        CalculatePinDistanceOrthogonality();
         SpacePins();
     }
 
@@ -46,6 +48,10 @@ public class BowlingManager : MonoBehaviour
         
     }
 
+    void ScalePinDistance(float scalar)
+    {
+        pinDistance *= scalar;
+    }
 
     void CalculatePinDistanceOrthogonality()
     {
@@ -70,16 +76,16 @@ public class BowlingManager : MonoBehaviour
             {
                 pinInRow = 1;
                 row++;
-                leftBound -= pinDistance / 2;
+                leftBound -= pinDistance  / 2;
                 relativeX = leftBound;
                 relativeY += orthogonalPinDistance;
             }
             bowlingPins[i].transform.Translate(new Vector3(relativeX, relativeY, 0));
-            relativeX += pinDistance;
+            relativeX += pinDistance ;
             pinInRow++;
         }
-        gutterLeft.transform.position = new Vector3(-laneWidthPerRow * row / 2, 0, 0);
-        gutterRight.transform.position = new Vector3(laneWidthPerRow * row / 2, 0, 0);
+        //gutterLeft.transform.position = new Vector3(-laneWidthPerRow * row / 2, 0, 0);
+        //gutterRight.transform.position = new Vector3(laneWidthPerRow * row / 2, 0, 0);
 
 
 
