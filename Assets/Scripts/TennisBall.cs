@@ -25,6 +25,10 @@ public class TennisBall : MonoBehaviour
 
     private Rigidbody rb;
 
+    public readonly float RacketCooldownBase = 250;
+    private float RacketCooldown = 0;
+    private bool RacketCooldownActive = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +39,15 @@ public class TennisBall : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (RacketCooldownActive)
+        {
+            RacketCooldown += Time.deltaTime * 1000;
+            if (RacketCooldown >= RacketCooldownBase)
+            {
+                RacketCooldownActive = false;
+                RacketCooldown = RacketCooldownBase;
+            }
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -47,6 +59,7 @@ public class TennisBall : MonoBehaviour
                 previousHit = tennisManager.Server;
                 previousHitWasRacket = true;
                 hasBeenServed = true;
+                RacketCooldownActive = true;
                 return;
             }
 
@@ -83,6 +96,10 @@ public class TennisBall : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("TennisRacket"))
         {
+            if (RacketCooldownActive)
+            {
+                return;
+            }
             previousHitWasRacket = true;
             int playerId = collision.gameObject.GetComponent<TennisRacket>().PlayerId;
             if ((playerId == previousHit) && previousHitWasRacket)
