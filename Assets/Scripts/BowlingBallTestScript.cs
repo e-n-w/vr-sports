@@ -1,20 +1,19 @@
-
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class BowlingBallTestScript : MonoBehaviour
 {
-    Rigidbody body;
-    Vector3 startPosition;
-    [SerializeField] float moveScalar = 0.01f, forceScalar = 8000f; 
+    private Rigidbody body;
+    private Vector3 startPosition;
+    [SerializeField] private float moveScalar = 0.01f, forceScalar = 8000f;
 
-    void Start()
+    private void Start()
     {
         body = GetComponent<Rigidbody>();
         startPosition = body.position;
     }
-
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.B))
         {
