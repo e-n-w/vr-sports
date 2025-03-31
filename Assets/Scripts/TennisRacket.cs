@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TennisRacket : MonoBehaviour
 {
-    public int PlayerId { get; }
+    public int PlayerId;
 
     // Start is called before the first frame update
     void Start()

@@ -73,11 +73,13 @@ public class TennisManager : MonoBehaviour
 
     public void ReturnBallToServer()
     {
+        Debug.Log("Returning to Sender!");
         ballScript.hasBeenServed = false;
+        ball.GetComponent<Rigidbody>().isKinematic = true;
 
         if(Server == 0)
         {
-            ball.transform.position = player1.transform.position + player1.transform.forward + player1.GetNamedChild("Camera Offset").transform.position;
+            ball.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 0.5f;
         }
     }
 }

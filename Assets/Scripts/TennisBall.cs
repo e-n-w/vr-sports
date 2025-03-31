@@ -46,10 +46,12 @@ public class TennisBall : MonoBehaviour
             {
                 previousHit = tennisManager.Server;
                 previousHitWasRacket = true;
+                hasBeenServed = true;
+                return;
             }
 
             // Return the ball to the serving player
-
+            tennisManager.ReturnBallToServer();
 
             return;
         }
@@ -83,10 +85,11 @@ public class TennisBall : MonoBehaviour
         {
             previousHitWasRacket = true;
             int playerId = collision.gameObject.GetComponent<TennisRacket>().PlayerId;
-            if (playerId == previousHit && previousHitWasRacket)
+            if ((playerId == previousHit) && previousHitWasRacket)
             {
                 tennisManager.ScorePoint(playerId == 0 ? 1 : 0);
             }
+            previousHit = playerId;
         }
         else if(collision.gameObject.CompareTag("TennisLava") || collision.gameObject.CompareTag("TennisNet"))
         {
