@@ -27,7 +27,19 @@ public class BowlingManager : MonoBehaviour
         SpacePins();
     }
 
-  
+    // Remove before release!!!
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+
+            ScalePinDistance(.5f);
+            CalculatePinDistanceOrthogonality();
+            SpacePins();
+        }
+    }
+
+
     void CreatePlayerFrameHistories()
     {
         playerScore = new BowlingPlayerFrameHistory[numPlayers];

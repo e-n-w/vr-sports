@@ -3,7 +3,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class BowlingBallXRInteractions : MonoBehaviour
 {
-    [SerializeField] private float rotationScalar = 1f; 
+    [SerializeField] private float rotationScalar = 2f; 
     public enum HandType { LeftHand, RightHand, None}
     
     private XRDirectInteractor leftController, rightController;
@@ -14,6 +14,7 @@ public class BowlingBallXRInteractions : MonoBehaviour
 
     void Update()
     {
+      /*
         if (leftController.attachTransform.CompareTag("Bowling Ball"))
         {
 
@@ -22,23 +23,26 @@ public class BowlingBallXRInteractions : MonoBehaviour
         {
 
         }
+      */
     }
+
     private void OnGrabbed(XRBaseInteractor interactor)
     {
         string hand = interactor.transform.name.Contains("Left") ? "Left Hand" : "Right Hand";
     }
 
-    void ReleaseBall() => transform.Rotate(new Vector3(0, 0, SetHandZRotation(SetHand()) * rotationScalar));
+    public void ReleaseBall() => transform.Rotate(new Vector3(0, 0, SetHandZRotation(SetHand()) * rotationScalar));
 
     private float SetHandZRotation(XRDirectInteractor hand)
     {
-        if (hand.transform.rotation.z > 179)
+        if (hand.transform.rotation.x > 179)
             return 179;
-        else if (hand.transform.rotation.z < -179)
+        else if (hand.transform.rotation.x < -179)
             return -179;
         else
-            return hand.transform.rotation.z;
+            return hand.transform.rotation.x;
     }
+
     private XRDirectInteractor SetHand()
     {
         if (CheckHand() == HandType.LeftHand)
@@ -49,11 +53,10 @@ public class BowlingBallXRInteractions : MonoBehaviour
         return null;
     }
 
-    //Returns 0 on left hand, 1 on right hand, and -1 for all other cases
     HandType CheckHand()
     {
-        if (leftController.attachTransform.CompareTag("Bowling Ball")) return HandType.LeftHand;
-        else if (rightController.attachTransform.CompareTag("Bowling Ball")) return HandType.RightHand;
+        if (leftController.attachTransform.CompareTag("BowlingBall")) return HandType.LeftHand;
+        else if (rightController.attachTransform.CompareTag("BowlingBall")) return HandType.RightHand;
         else return HandType.None;
     }
 

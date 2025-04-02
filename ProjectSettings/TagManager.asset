@@ -8,6 +8,7 @@ TagManager:
   - TennisCourt
   - TennisNet
   - BowlingLane
+  - BowlingBall
   layers:
   - Default
   - TransparentFX
