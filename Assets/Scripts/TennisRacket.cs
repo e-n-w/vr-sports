@@ -6,7 +6,7 @@ public class TennisRacket : MonoBehaviour
 {
     public int PlayerId;
 
-    private Rigidbody rb;
+    new private Rigidbody rigidbody;
     [SerializeField]
     private GameObject rightHand;
     [SerializeField]
@@ -15,7 +15,7 @@ public class TennisRacket : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        rigidbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -26,8 +26,8 @@ public class TennisRacket : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rightHand.transform.position);
-        rb.MoveRotation(rightHand.transform.rotation);
+        rigidbody.MovePosition(rightHand.transform.position);
+        rigidbody.MoveRotation(rightHand.transform.rotation);
     }
 
     private void LateUpdate()

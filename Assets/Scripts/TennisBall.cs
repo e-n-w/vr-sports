@@ -26,7 +26,6 @@ public class TennisBall : MonoBehaviour
     private Rigidbody rb;
 
     public readonly float RacketCooldownBase = 250;
-    private float RacketCooldown = 0;
     private bool RacketCooldownActive = false;
 
 
@@ -39,19 +38,18 @@ public class TennisBall : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (RacketCooldownActive)
-        {
-            RacketCooldown += Time.deltaTime * 1000;
-            if (RacketCooldown >= RacketCooldownBase)
-            {
-                RacketCooldownActive = false;
-                RacketCooldown = RacketCooldownBase;
-            }
-        }
+
     }
 
+    private IEnumerator CoolDown()
+    {
+        RacketCooldownActive = true;
+        yield return new WaitForSeconds(RacketCooldownBase / 1000f);
+        RacketCooldownActive = false;
+    }
     void OnCollisionEnter(Collision collision)
     {
+
         if (!hasBeenServed) 
         {
             if(collision.gameObject.CompareTag("TennisRacket"))
@@ -59,7 +57,7 @@ public class TennisBall : MonoBehaviour
                 previousHit = tennisManager.Server;
                 previousHitWasRacket = true;
                 hasBeenServed = true;
-                RacketCooldownActive = true;
+                StartCoroutine(CoolDown());
                 return;
             }
 
@@ -69,49 +67,66 @@ public class TennisBall : MonoBehaviour
             return;
         }
 
-        if (collision.gameObject.CompareTag("TennisCourt"))
-        {
-            previousHitWasRacket = false;
-            Vector3 point = collision.GetContact(0).point;
-            Vector3 courtOrigin = court.transform.position;
-            if (point.x < courtOrigin.x + courtLength / 2 && point.x > courtOrigin.x - courtLength / 2 && point.y < courtOrigin.y + courtWidth / 2 && point.y > courtOrigin.y - courtWidth / 2)
-            {
-                if(previousHit == 0 && point.x >= 0)
-                {
-                    tennisManager.ScorePoint(1);
-                }
-                else if(previousHit == 1 && point.x < 0)
-                {
-                    tennisManager.ScorePoint(0);
-                }
-                else
-                {
-                    previousHit = point.x > 0 ? 0 : 1;
-                }
-            }
-            else
-            {
-                tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
-            }
-        }
-        else if (collision.gameObject.CompareTag("TennisRacket"))
-        {
-            if (RacketCooldownActive)
-            {
-                return;
-            }
-            previousHitWasRacket = true;
-            int playerId = collision.gameObject.GetComponent<TennisRacket>().PlayerId;
-            if ((playerId == previousHit) && previousHitWasRacket)
-            {
-                tennisManager.ScorePoint(playerId == 0 ? 1 : 0);
-            }
-            previousHit = playerId;
-        }
+        if (collision.gameObject.CompareTag("TennisCourt")) CourtWasHit(collision);
+
+        else if (collision.gameObject.CompareTag("TennisRacket")) RacketWasHit(collision);
+
         else if(collision.gameObject.CompareTag("TennisLava") || collision.gameObject.CompareTag("TennisNet"))
         {
             previousHitWasRacket = false;
             tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
+        }
+    }
+    private void CourtWasHit(Collision collision)
+    {
+        previousHitWasRacket = false;
+        Vector3 collisionPoint = collision.GetContact(0).point;
+        if (IsPointInCourt(collisionPoint))
+        {
+            if (previousHit == 0 && collisionPoint.x >= 0)
+            {
+                tennisManager.ScorePoint(1);
+            }
+            else if (previousHit == 1 && collisionPoint.x < 0)
+            {
+                tennisManager.ScorePoint(0);
+            }
+            else
+            {
+                previousHit = collisionPoint.x > 0 ? 0 : 1;
+            }
+        }
+        else
+        {
+            tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
+        }
+    }
+
+    private void RacketWasHit(Collision collision)
+    {
+        if (RacketCooldownActive)
+        {
+            return;
+        }
+        previousHitWasRacket = true;
+        int playerId = collision.gameObject.GetComponent<TennisRacket>().PlayerId;
+        if ((playerId == previousHit) && previousHitWasRacket)
+        {
+            tennisManager.ScorePoint(playerId == 0 ? 1 : 0);
+        }
+        previousHit = playerId;
+    }
+
+    private bool IsPointInCourt(Vector3 point)
+    {
+        Vector3 courtOrigin = court.transform.position;
+        if (point.x < courtOrigin.x + courtLength / 2 && point.x > courtOrigin.x - courtLength / 2 && point.y < courtOrigin.y + courtWidth / 2 && point.y > courtOrigin.y - courtWidth / 2)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

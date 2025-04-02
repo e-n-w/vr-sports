@@ -11,7 +11,6 @@ public class TennisManager : MonoBehaviour
     private GameObject player2;
 
     [SerializeField]
-    private GameObject ball;
     private TennisBall ballScript;
 
     [SerializeField]
@@ -21,11 +20,6 @@ public class TennisManager : MonoBehaviour
 
     public int Server { get; private set; }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        ballScript = ball.GetComponent<TennisBall>();
-    }
 
     // Update is called once per frame
     void Update()
@@ -75,11 +69,11 @@ public class TennisManager : MonoBehaviour
     {
         Debug.Log("Returning to Sender!");
         ballScript.hasBeenServed = false;
-        ball.GetComponent<Rigidbody>().isKinematic = true;
+        ballScript.GetComponent<Rigidbody>().isKinematic = true;
 
         if(Server == 0)
         {
-            ball.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 0.5f;
+            ballScript.gameObject.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 0.5f;
         }
     }
 }
