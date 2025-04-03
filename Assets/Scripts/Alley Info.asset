@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 716198e2e4368ef4d83f543e0b513fe0, type: 3}
+  m_Name: Alley Info
+  m_EditorClassIdentifier: 
+  laneDistance: 720
+  laneWidthPerRow: 10.375
+  extraLaneDepthPerRow: 8.5468
+  gutterDepth: 1.875
+  gutterWidth: 9.25
+  pinDistance: 12
+  orthogonalPinDistance: 0
+  scalar: 1
+  numPlayers: 0
+  numPins: 10

@@ -35,10 +35,11 @@ public class BowlingBallXRInteractions : MonoBehaviour
 
     private float SetHandZRotation(XRDirectInteractor hand)
     {
-        if (hand.transform.rotation.x > 179)
-            return 179;
-        else if (hand.transform.rotation.x < -179)
-            return -179;
+        //if(hand.transform.eulerAngles)
+        if (hand.transform.rotation.x > 1)
+            return 1;
+        else if (hand.transform.rotation.x < -1)
+            return -1;
         else
             return hand.transform.rotation.x;
     }
