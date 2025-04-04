@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -11,34 +13,16 @@ public class TennisBall : MonoBehaviour
     public bool isInHand = true;
     public bool hasBeenServed = false;
 
-    [SerializeField]
-    private int previousHit;
-    public bool previousHitWasRacket;
-
-    [SerializeField]
-    private GameObject court;
-
-    [SerializeField]
-    private float courtWidth;
-    [SerializeField]
-    private float courtLength;
-
     private Rigidbody rb;
 
     public readonly float RacketCooldownBase = 250;
     private bool RacketCooldownActive = false;
 
+    private List<TennisHit> previousHits = new();
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     private IEnumerator CoolDown()
@@ -47,15 +31,14 @@ public class TennisBall : MonoBehaviour
         yield return new WaitForSeconds(RacketCooldownBase / 1000f);
         RacketCooldownActive = false;
     }
-    void OnCollisionEnter(Collision collision)
-    {
 
-        if (!hasBeenServed) 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!hasBeenServed)
         {
-            if(collision.gameObject.CompareTag("TennisRacket"))
+            if (collision.gameObject.CompareTag("TennisRacket"))
             {
-                previousHit = tennisManager.Server;
-                previousHitWasRacket = true;
+                CycleHits(new TennisHit(collision.gameObject.GetComponent<TennisRacket>().Player, HitSurface.Racket));
                 hasBeenServed = true;
                 StartCoroutine(CoolDown());
                 return;
@@ -67,67 +50,66 @@ public class TennisBall : MonoBehaviour
             return;
         }
 
-        if (collision.gameObject.CompareTag("TennisCourt")) CourtWasHit(collision);
-
-        else if (collision.gameObject.CompareTag("TennisRacket")) RacketWasHit(collision);
-
-        else if(collision.gameObject.CompareTag("TennisLava") || collision.gameObject.CompareTag("TennisNet"))
+        if (collision.gameObject.CompareTag("TennisOut"))
         {
-            previousHitWasRacket = false;
-            tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
+            tennisManager.ScorePoint(LastHit().player);
+            previousHits = new List<TennisHit>();
         }
-    }
-    private void CourtWasHit(Collision collision)
-    {
-        previousHitWasRacket = false;
-        Vector3 collisionPoint = collision.GetContact(0).point;
-        if (IsPointInCourt(collisionPoint))
+        else if (collision.gameObject.CompareTag("TennisRacket"))
         {
-            if (previousHit == 0 && collisionPoint.x >= 0)
+            if (RacketCooldownActive)
             {
-                tennisManager.ScorePoint(1);
+                return;
             }
-            else if (previousHit == 1 && collisionPoint.x < 0)
+
+            TennisPlayer thisPlayer = collision.gameObject.GetComponent<TennisRacket>().Player;
+            TennisHit lastHit = LastHit();
+            if(lastHit.player.Id == thisPlayer.Id && lastHit.hitSurface == HitSurface.Racket)
             {
-                tennisManager.ScorePoint(0);
+                tennisManager.ScorePoint(previousHits.Last(p => p.player.Id != thisPlayer.Id).player);
+                previousHits = new List<TennisHit>();
             }
             else
             {
-                previousHit = collisionPoint.x > 0 ? 0 : 1;
+                CycleHits(new TennisHit(thisPlayer, HitSurface.Racket));
+            }
+        }
+        else if (collision.gameObject.CompareTag("TennisCourt"))
+        {
+            TennisPlayer thisPlayer = collision.gameObject.GetComponent<TennisCourt>().AssociatedPlayer;
+            TennisHit lastHit = LastHit();
+            if(lastHit.player.Id == thisPlayer.Id)
+            {
+                tennisManager.ScorePoint(previousHits.Last(p => p.player.Id != thisPlayer.Id).player);
+            }
+            else
+            {
+                CycleHits(new TennisHit(thisPlayer, HitSurface.Court));
             }
         }
         else
         {
-            tennisManager.ScorePoint(previousHit == 0 ? 1 : 0);
+            tennisManager.ReturnBallToServer();
         }
     }
 
-    private void RacketWasHit(Collision collision)
+    private void CycleHits(TennisHit newHit)
     {
-        if (RacketCooldownActive)
-        {
-            return;
-        }
-        previousHitWasRacket = true;
-        int playerId = collision.gameObject.GetComponent<TennisRacket>().PlayerId;
-        if ((playerId == previousHit) && previousHitWasRacket)
-        {
-            tennisManager.ScorePoint(playerId == 0 ? 1 : 0);
-        }
-        previousHit = playerId;
-    }
-
-    private bool IsPointInCourt(Vector3 point)
-    {
-        Vector3 courtOrigin = court.transform.position;
-        if (point.x < courtOrigin.x + courtLength / 2 && point.x > courtOrigin.x - courtLength / 2 && point.y < courtOrigin.y + courtWidth / 2 && point.y > courtOrigin.y - courtWidth / 2)
-        {
-            return true;
+        if (previousHits.Count < 3)
+        { 
+            previousHits.Add(newHit);
         }
         else
         {
-            return false;
+            previousHits[0] = previousHits[1];
+            previousHits[1] = previousHits[2];
+            previousHits[2] = newHit;
         }
+    }
+
+    private TennisHit LastHit()
+    {
+        return previousHits.Last();
     }
 
     public void OnSelected(SelectEnterEventArgs args)
@@ -141,4 +123,23 @@ public class TennisBall : MonoBehaviour
         isInHand = false;
         rb.isKinematic = false;
     }
+}
+
+public enum HitSurface
+{
+    Court,
+    Racket
+}
+
+public class TennisHit
+{
+    public readonly TennisPlayer player;
+    public readonly HitSurface hitSurface;
+
+    public TennisHit(TennisPlayer player, HitSurface surface)
+    {
+        this.player = player;
+        this.hitSurface = surface;
+    }
+
 }

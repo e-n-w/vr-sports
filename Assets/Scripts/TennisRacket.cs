@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TennisRacket : MonoBehaviour
 {
-    public int PlayerId;
+    public TennisPlayer Player { get; set; }
 
     new private Rigidbody rigidbody;
     [SerializeField]

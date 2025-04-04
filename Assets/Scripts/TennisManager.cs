@@ -2,67 +2,68 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.XR.CoreUtils;
 using UnityEngine;
+using System.Linq;
 
 public class TennisManager : MonoBehaviour
-{
-    [SerializeField]
-    private GameObject player1;
-    [SerializeField]
-    private GameObject player2;
-
+{ 
     [SerializeField]
     private TennisBall ballScript;
 
     [SerializeField]
-    public int Player1Score { get; private set; } = 0;
+    private GameObject courtPrefab;
+    [SerializeField] 
+    private GameObject netPrefab;
+
     [SerializeField]
-    public int Player2Score { get; private set; } = 0;
+    private float courtWidth;
+    [SerializeField]
+    private float courtLength;
 
-    public int Server { get; private set; }
+    [SerializeField, Range(2, 6)]
+    private int NumPlayers;
+    private List<TennisPlayer> players;
 
+    public TennisPlayer Server { get; private set; }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
+        players = new List<TennisPlayer>();
+        float distanceFromCenter = courtWidth / (2 * Mathf.Tan(Mathf.PI/NumPlayers)) + courtLength/2;
+        for (int i = 0; i < NumPlayers; i++)
+        {
+            players.Add(new TennisPlayer(i));
+            GameObject courtPart = Instantiate(courtPrefab);
+            courtPart.transform.eulerAngles = new Vector3(90, 360 / NumPlayers*i, 0);
+            courtPart.transform.localScale = new Vector3(courtLength, courtWidth, 0.25f);
+            courtPart.transform.Translate(distanceFromCenter * courtPart.transform.right, Space.World);
+            courtPart.GetComponent<TennisCourt>().AssociatedPlayer = players[i];
 
-    }
-
-    public void ScorePoint(int PlayerId)
-    {
-        Debug.Log($"Point scored for {PlayerId}");
-        if (PlayerId == 0)
-        {
-            Player1Score++;
+            GameObject net = Instantiate(netPrefab);
+            net.transform.eulerAngles = new Vector3(0, 90 + 360 / NumPlayers * i, 0);
+            net.transform.localScale = new Vector3(courtWidth, 1, 0.25f);
+            net.transform.Translate((distanceFromCenter - courtLength/2 ) * net.transform.forward, Space.World);
         }
-        else if (PlayerId == 1)
-        {
-            Player2Score++;
-        }
-
-        if(Player1Score == 4 && Player2Score < 3)
-        {
-            WinGame(0);
-        }
-        else if(Player1Score == Player2Score + 2 && Player2Score >= 3)
-        {
-            WinGame(0);
-        }
-        else if (Player2Score == 4 && Player1Score < 3)
-        {
-            WinGame(1);
-        }
-        else if (Player2Score == Player1Score + 2 && Player1Score >= 3)
-        {
-            WinGame(1);
-        }
-
-        Server = PlayerId == 0 ? 1 : 0;
+        GameObject.Find("Racket1").GetComponent<TennisRacket>().Player = players[0];
+        Server = players[0];
         ReturnBallToServer();
     }
 
-    private void WinGame(int PlayerId)
+    public void ScorePoint(TennisPlayer player)
     {
-        Debug.Log($"Winner is {PlayerId}");
+        player.Score++;
+        if(player.Score == 4 && !players.Any(p => p.Score >= 3))
+        {
+            WinGame(player);
+        }
+        else if (player.Score >= players.Max(p => p.Score) + 2)
+        {
+            WinGame(player);
+        }
+    }
+
+    private void WinGame(TennisPlayer player)
+    {
+        Debug.Log($"Winner is {player.Id}");
     }
 
     public void ReturnBallToServer()
@@ -71,7 +72,7 @@ public class TennisManager : MonoBehaviour
         ballScript.hasBeenServed = false;
         ballScript.GetComponent<Rigidbody>().isKinematic = true;
 
-        if(Server == 0)
+        if(Server.Id == 0)
         {
             ballScript.gameObject.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 0.5f;
         }
