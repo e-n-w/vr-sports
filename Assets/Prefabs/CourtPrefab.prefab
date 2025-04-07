@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4017452029239720855}
   - component: {fileID: 8462664177917783632}
   - component: {fileID: 2530201863586455303}
+  - component: {fileID: 6302220613953726504}
   m_Layer: 0
   m_Name: CourtPrefab
   m_TagString: TennisCourt
@@ -63,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f4d5f1efed8a815448dc9f942fb67b07, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -111,3 +112,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a5d3fe7987923488c8f9842c499018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6302220613953726504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2206685865745005882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c49a814c4a2a64aa058cd2ebec4d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textureScaleU: 2.5
+  textureScaleV: 1.5

@@ -38,7 +38,7 @@ public class TennisBall : MonoBehaviour
         {
             if (collision.gameObject.CompareTag("TennisRacket"))
             {
-                CycleHits(new TennisHit(collision.gameObject.GetComponent<TennisRacket>().Player, HitSurface.Racket));
+                previousHits.Add(new TennisHit(collision.gameObject.GetComponent<TennisRacket>().Player, HitSurface.Racket));
                 hasBeenServed = true;
                 StartCoroutine(CoolDown());
                 return;
@@ -52,39 +52,30 @@ public class TennisBall : MonoBehaviour
 
         if (collision.gameObject.CompareTag("TennisOut"))
         {
-            tennisManager.ScorePoint(LastHit().player);
+            TennisPlayer scorer = GetLastHit(p => p.player.Id != GetLastHit().player.Id)?.player;
+            tennisManager.ScorePoint(scorer, GetLastHit().player);
             previousHits = new List<TennisHit>();
         }
-        else if (collision.gameObject.CompareTag("TennisRacket"))
+        else if (collision.gameObject.CompareTag("TennisRacket") || collision.gameObject.CompareTag("TennisCourt"))
         {
-            if (RacketCooldownActive)
+            bool wasRacket = collision.gameObject.CompareTag("TennisRacket");
+            if (wasRacket && RacketCooldownActive)
             {
                 return;
             }
 
-            TennisPlayer thisPlayer = collision.gameObject.GetComponent<TennisRacket>().Player;
-            TennisHit lastHit = LastHit();
-            if(lastHit.player.Id == thisPlayer.Id && lastHit.hitSurface == HitSurface.Racket)
+            TennisPlayer thisPlayer = wasRacket ? collision.gameObject.GetComponent<TennisRacket>().Player : collision.gameObject.GetComponent<TennisCourt>().AssociatedPlayer;
+            TennisHit lastHit = GetLastHit();
+
+            Debug.Log($"{thisPlayer.Id} | {lastHit.player.Id}");
+            if(lastHit.player.Id == thisPlayer.Id && (wasRacket && lastHit.hitSurface == HitSurface.Racket))
             {
-                tennisManager.ScorePoint(previousHits.Last(p => p.player.Id != thisPlayer.Id).player);
+                tennisManager.ScorePoint(GetLastHit(p => p.player.Id != thisPlayer.Id)?.player, thisPlayer);
                 previousHits = new List<TennisHit>();
             }
             else
             {
-                CycleHits(new TennisHit(thisPlayer, HitSurface.Racket));
-            }
-        }
-        else if (collision.gameObject.CompareTag("TennisCourt"))
-        {
-            TennisPlayer thisPlayer = collision.gameObject.GetComponent<TennisCourt>().AssociatedPlayer;
-            TennisHit lastHit = LastHit();
-            if(lastHit.player.Id == thisPlayer.Id)
-            {
-                tennisManager.ScorePoint(previousHits.Last(p => p.player.Id != thisPlayer.Id).player);
-            }
-            else
-            {
-                CycleHits(new TennisHit(thisPlayer, HitSurface.Court));
+                previousHits.Add(new TennisHit(thisPlayer, wasRacket ? HitSurface.Racket : HitSurface.Court));
             }
         }
         else
@@ -93,21 +84,19 @@ public class TennisBall : MonoBehaviour
         }
     }
 
-    private void CycleHits(TennisHit newHit)
+    private TennisHit GetLastHit(Func<TennisHit, bool> predicate)
     {
-        if (previousHits.Count < 3)
-        { 
-            previousHits.Add(newHit);
-        }
-        else
+        try
         {
-            previousHits[0] = previousHits[1];
-            previousHits[1] = previousHits[2];
-            previousHits[2] = newHit;
+            return previousHits.Last(predicate);
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
         }
     }
 
-    private TennisHit LastHit()
+    private TennisHit GetLastHit()
     {
         return previousHits.Last();
     }

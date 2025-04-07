@@ -980,7 +980,7 @@ GameObject:
   - component: {fileID: 743488524}
   - component: {fileID: 743488525}
   m_Layer: 0
-  m_Name: Racket1
+  m_Name: HostRacket
   m_TagString: TennisRacket
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1147,6 +1147,7 @@ MonoBehaviour:
   courtWidth: 6
   courtLength: 10
   NumPlayers: 2
+  hostPlayerRig: {fileID: 6031301006411229325}
 --- !u!4 &1524214452
 Transform:
   m_ObjectHideFlags: 0
@@ -1155,7 +1156,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1524214450}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -197.53732, y: -237.98071, z: 377.9987}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
