@@ -17,10 +17,10 @@ public class BowlingBallXRInteractions : MonoBehaviour
         leftController =  InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
         rightController = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
 
-        if (args.interactorObject is XRBaseInputInteractor controllerInteractor && controllerInteractor != null)
-        {
-            var controller = controllerInteractor.xrController;
-        }
+    //    if (args.interactorObject is XRBaseInputInteractor controllerInteractor && controllerInteractor != null)
+    //    {
+    //        var controller = controllerInteractor.xrController;
+    //    }
     }
 
     void Update()
@@ -43,52 +43,52 @@ public class BowlingBallXRInteractions : MonoBehaviour
 
     }
 
-    public void ReleaseBall()
-    {
-        transform.Rotate(new Vector3(0, 0, SetHandZRotation(controller) * rotationScalar));
-        body.velocity = new Vector3 (body.velocity.x, Mathf.Clamp(body.velocity.y, 0f, 10f), body.velocity.z);
-    }
-    private float SetHandZRotation(IXRSelectInteractor hand)
-    {
+    //public void ReleaseBall()
+    //{
+    //    transform.Rotate(new Vector3(0, 0, SetHandZRotation(leftController) * rotationScalar));
+    //    body.velocity = new Vector3 (body.velocity.x, Mathf.Clamp(body.velocity.y, 0f, 10f), body.velocity.z);
+    //}
+    //private float SetHandZRotation(IXRSelectInteractor hand)
+    //{
 
-        //if(hand.transform.eulerAngles)
-        if (hand.transform.rotation.x > 1)
-            return 1;
-        else if (hand.transform.rotation.x < -1)
-            return -1;
-        else
-            return hand.transform.rotation.x;
-    }
+    //    //if(hand.transform.eulerAngles)
+    //    if (hand.transform.rotation.x > 1)
+    //        return 1;
+    //    else if (hand.transform.rotation.x < -1)
+    //        return -1;
+    //    else
+    //        return hand.transform.rotation.x;
+    //}
 
-    private UnityEngine.XR.InputDevice SetHand()
+    //private UnityEngine.XR.InputDevice SetHand()
 
-    {
+    //{
 
-        if (CheckHand() == HandType.LeftHand)
+    //    if (CheckHand() == HandType.LeftHand)
 
-            return leftController;
+    //        return leftController;
 
-        else if (CheckHand() == HandType.RightHand)
+    //    else if (CheckHand() == HandType.RightHand)
 
-            return rightController;
-
-
-
-        return new UnityEngine.XR.InputDevice();
-
-    }
+    //        return rightController;
 
 
-    HandType CheckHand()
 
-    {
+    //    return new UnityEngine.XR.InputDevice();
 
-        if (leftController.attachTransform.CompareTag("BowlingBall")) return HandType.LeftHand;
+    //}
 
-        else if (rightController.attachTransform.CompareTag("BowlingBall")) return HandType.RightHand;
 
-        else return HandType.None;
+//    HandType CheckHand()
 
-    }
+//    {
+
+//        if (leftController.attachTransform.CompareTag("BowlingBall")) return HandType.LeftHand;
+
+//        else if (rightController.attachTransform.CompareTag("BowlingBall")) return HandType.RightHand;
+
+//        else return HandType.None;
+
+//    }
 
 }

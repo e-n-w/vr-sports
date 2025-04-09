@@ -12,11 +12,15 @@ public class BowlingManager : MonoBehaviour
     // Pin distance is scaled within the spacing method
 
     [SerializeField] private BowlingAlleyInfo _alleyInfo;
-    [SerializeField] private List<GameObject> bowlingPins;
-    [SerializeField] private GameObject pinPrefab, localPlayer;
+    [SerializeField] private List<BowlingPinBehaviour> bowlingPins;
+    [SerializeField] private GameObject pinPrefab, lanePrefab, localPlayer;
+    [SerializeField] private Vector3 initialLanePosition = Vector3.zero;
+    [SerializeField] private float laneDistance = 10f;
+    private int numPlayers = 2;
     private BowlingPlayerFrameHistory[] playerScore;
     private ProBuilderMesh gutterLeft, gutterRight, lane;
     [SerializeField] private Material gutter;
+
 
     void Start()
     {
@@ -26,6 +30,7 @@ public class BowlingManager : MonoBehaviour
         ScalePinDistance();
         CalculatePinDistanceOrthogonality();
         SpacePins();
+        GenerateLanes();
     }
 
     // Remove before release!!!
@@ -56,7 +61,7 @@ public class BowlingManager : MonoBehaviour
     {
         for (int i = 0; i < _alleyInfo.numPins; i++) 
         {
-            bowlingPins.Add(Instantiate(pinPrefab));
+            bowlingPins.Add(Instantiate(pinPrefab).GetComponent<BowlingPinBehaviour>());
         }
         
     }
@@ -75,12 +80,10 @@ public class BowlingManager : MonoBehaviour
     
    
     void SpacePins() 
-
-        //Note: this will also size the bowling lane
+    {
         //Pins are spaced in an equilateral triangle so this janky method should allow for spacing and pin count alterations
         //The pin asset I used is oriented sideways and I used Y instead of Z to reflect this
         // NOTE ON ABOVE: I changed the model so it should be back to Z
-    {
         float relativeX = transform.position.x, relativeZ = transform.position.z, leftBound = 0;
         int pinInRow = 1, row = 1;
 
@@ -98,18 +101,21 @@ public class BowlingManager : MonoBehaviour
             relativeX += _alleyInfo.pinDistance;
             pinInRow++;
         }
-        GenerateLane(row);
+
     }
 
-    public void GenerateLane(int numRows)
+    public void GenerateLanes()
     {
-        //creates GameObject and sizes it to the gutter information
-        gutterLeft = ShapeGenerator.GenerateArch(PivotLocation.Center, 180f, -_alleyInfo.gutterDepth , .1f, (_alleyInfo.laneDistance + _alleyInfo.extraLaneDepthPerRow), 20, false, true, false, false, true);
-        gutterRight = ShapeGenerator.GenerateArch(PivotLocation.Center, 180f, -_alleyInfo.gutterDepth, .1f, (_alleyInfo.laneDistance + _alleyInfo.extraLaneDepthPerRow), 20, false, true, false, false, true);
-        gutterLeft.transform.position = new Vector3(-GutterXLocation(numRows), -_alleyInfo.gutterDepth/2, 0);
-        gutterRight.transform.position = new Vector3(GutterXLocation(numRows), -_alleyInfo.gutterDepth/2, 0);
-        lane = ShapeGenerator.GeneratePlane(PivotLocation.Center, _alleyInfo.laneDistance, _alleyInfo.laneWidthPerRow * numRows, 60, 2, Axis.Up);
-        lane.transform.position = new Vector3(0, 0, 0);
+        //Creates a lane for each player as specified by the numPlayers variable
+        Vector3 laneOffset = new Vector3(laneDistance, 0, 0);
+
+        for (int i = 0; i < numPlayers; i++) {
+            GameObject lane = Instantiate(lanePrefab);
+            lane.transform.position = Vector3.zero;
+            lane.transform.Translate(initialLanePosition + i * laneOffset, Space.World);
+            Debug.Log(initialLanePosition + i * laneOffset);
+        }
+
         
     }
 
@@ -127,7 +133,13 @@ public class BowlingManager : MonoBehaviour
 
     public void UpdateLane()
     {
+        foreach (var pin in bowlingPins)
+        {
+            if (pin.isStanding)
+            {
 
+            }
+        }
     }
 
     public int CalculateScore(GameObject player)
@@ -135,7 +147,7 @@ public class BowlingManager : MonoBehaviour
         int newBowl = 0;
         for (int i = 0; i < bowlingPins.Count; i++)
         {
-            if (bowlingPins[i].GetComponent<BowlingPinBehaviour>().isOnLane && !bowlingPins[i].GetComponent<BowlingPinBehaviour>().isStanding)
+            if (bowlingPins[i].isOnLane && !bowlingPins[i].isStanding)
             {
                 newBowl += 1;
             }
