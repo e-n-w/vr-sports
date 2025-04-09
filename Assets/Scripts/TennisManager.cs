@@ -29,8 +29,9 @@ public class TennisManager : MonoBehaviour
 
     public TennisPlayer Server { get; private set; }
 
-    private void Start()
+    public void StartMatch(int numberOfPlayers)
     {
+        NumPlayers = numberOfPlayers;
         players = new List<TennisPlayer>();
         float distanceFromCenter = courtWidth / (2 * Mathf.Tan(Mathf.PI/NumPlayers)) + courtLength/2;
         for (int i = 0; i < NumPlayers; i++)
