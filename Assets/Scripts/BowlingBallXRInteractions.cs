@@ -1,5 +1,7 @@
-using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class BowlingBallXRInteractions : MonoBehaviour
@@ -8,17 +10,17 @@ public class BowlingBallXRInteractions : MonoBehaviour
     Rigidbody body;
     public enum HandType { LeftHand, RightHand, None}
     
-    [SerializeField] private XRDirectInteractor leftController, rightController;
+    [SerializeField] private UnityEngine.XR.InputDevice leftController, rightController;
     void Start()
     {
         body = GetComponent<Rigidbody>();
-        XRDirectInteractor[] hands = FindObjectsOfType<XRDirectInteractor>();
-        Debug.Log(hands.Length);
-        if (hands[0].transform.name == "Left Controller")
-            leftController = hands[0];
-        if (hands[1].transform.name == "Right Controller")
-            rightController = hands[1];
-        //rightController = GameObject.FindGameObjectWithTag("Right Controller");
+        leftController =  InputDevices.GetDeviceAtXRNode(XRNode.LeftHand);
+        rightController = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+
+        if (args.interactorObject is XRBaseInputInteractor controllerInteractor && controllerInteractor != null)
+        {
+            var controller = controllerInteractor.xrController;
+        }
     }
 
     void Update()
@@ -35,18 +37,20 @@ public class BowlingBallXRInteractions : MonoBehaviour
       */
     }
 
-    public void OnGrabbed(XRBaseInteractor interactor)
+    public void OnGrabbed()
     {
-        
+        rightController.TryGetFeatureValue(UnityEngine.XR.CommonUsages.deviceRotation, out Quaternion rotR);
+
     }
 
     public void ReleaseBall()
     {
-        transform.Rotate(new Vector3(0, 0, SetHandZRotation(SetHand()) * rotationScalar));
-        body.velocity = new Vector3 (body.velocity.x, Mathf.Clamp(body.velocity.y, -100f, 10f), body.velocity.z);
+        transform.Rotate(new Vector3(0, 0, SetHandZRotation(controller) * rotationScalar));
+        body.velocity = new Vector3 (body.velocity.x, Mathf.Clamp(body.velocity.y, 0f, 10f), body.velocity.z);
     }
-    private float SetHandZRotation(XRDirectInteractor hand)
+    private float SetHandZRotation(IXRSelectInteractor hand)
     {
+
         //if(hand.transform.eulerAngles)
         if (hand.transform.rotation.x > 1)
             return 1;
@@ -56,22 +60,35 @@ public class BowlingBallXRInteractions : MonoBehaviour
             return hand.transform.rotation.x;
     }
 
-    private XRDirectInteractor SetHand()
+    private UnityEngine.XR.InputDevice SetHand()
+
     {
+
         if (CheckHand() == HandType.LeftHand)
+
             return leftController;
+
         else if (CheckHand() == HandType.RightHand)
+
             return rightController;
 
-        return null;
+
+
+        return new UnityEngine.XR.InputDevice();
+
     }
+
 
     HandType CheckHand()
-    {
-        if (leftController.attachTransform.CompareTag("BowlingBall")) return HandType.LeftHand;
-        else if (rightController.attachTransform.CompareTag("BowlingBall")) return HandType.RightHand;
-        else return HandType.None;
-    }
 
+    {
+
+        if (leftController.attachTransform.CompareTag("BowlingBall")) return HandType.LeftHand;
+
+        else if (rightController.attachTransform.CompareTag("BowlingBall")) return HandType.RightHand;
+
+        else return HandType.None;
+
+    }
 
 }
