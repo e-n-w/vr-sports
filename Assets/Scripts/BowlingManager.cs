@@ -16,13 +16,14 @@ public class BowlingManager : MonoBehaviour
     [SerializeField] private GameObject pinPrefab, localPlayer;
     private BowlingPlayerFrameHistory[] playerScore;
     private ProBuilderMesh gutterLeft, gutterRight, lane;
+    [SerializeField] private Material gutter;
 
     void Start()
     {
         CreatePlayerFrameHistories();
         
         InstantiatePins();
-        ScalePinDistance(.5f);
+        ScalePinDistance();
         CalculatePinDistanceOrthogonality();
         SpacePins();
     }
@@ -33,7 +34,7 @@ public class BowlingManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
 
-            ScalePinDistance(.5f);
+            ScalePinDistance();
             CalculatePinDistanceOrthogonality();
          
         }
@@ -60,9 +61,9 @@ public class BowlingManager : MonoBehaviour
         
     }
 
-    void ScalePinDistance(float scalar)
+    void ScalePinDistance()
     {
-        _alleyInfo.pinDistance *= scalar;
+        _alleyInfo.pinDistance *= _alleyInfo.pinSpaceScalar;
     }
 
     void CalculatePinDistanceOrthogonality()
@@ -78,8 +79,9 @@ public class BowlingManager : MonoBehaviour
         //Note: this will also size the bowling lane
         //Pins are spaced in an equilateral triangle so this janky method should allow for spacing and pin count alterations
         //The pin asset I used is oriented sideways and I used Y instead of Z to reflect this
+        // NOTE ON ABOVE: I changed the model so it should be back to Z
     {
-        float relativeX = 0, relativeY = 0, leftBound = 0;
+        float relativeX = transform.position.x, relativeZ = transform.position.z, leftBound = 0;
         int pinInRow = 1, row = 1;
 
         for (int i = 0; i < bowlingPins.Count; i++)
@@ -90,27 +92,37 @@ public class BowlingManager : MonoBehaviour
                 row++;
                 leftBound -= _alleyInfo.pinDistance / 2;
                 relativeX = leftBound;
-                relativeY += _alleyInfo.orthogonalPinDistance;
+                relativeZ += _alleyInfo.orthogonalPinDistance;
             }
-            bowlingPins[i].transform.Translate(new Vector3(relativeX, relativeY, 0));
+            bowlingPins[i].transform.Translate(new Vector3(relativeX, 0, relativeZ));
             relativeX += _alleyInfo.pinDistance;
             pinInRow++;
         }
-        SizeLane(row);
+        GenerateLane(row);
     }
 
-    public void SizeLane(int row)
+    public void GenerateLane(int numRows)
     {
         //creates GameObject and sizes it to the gutter information
-        gutterLeft = ShapeGenerator.GenerateArch(PivotLocation.Center, 180f,_alleyInfo.gutterDepth , _alleyInfo.gutterWidth, (_alleyInfo.laneDistance + _alleyInfo.extraLaneDepthPerRow), 20, true, false, true, true, false);
-        gutterRight = ShapeGenerator.GenerateArch(PivotLocation.Center, 180f, _alleyInfo.gutterDepth, _alleyInfo.gutterWidth, (_alleyInfo.laneDistance + _alleyInfo.extraLaneDepthPerRow), 20, true, false, true, true, false);
-        gutterLeft.transform.position = new Vector3(-_alleyInfo.laneWidthPerRow * row / 2, 0, 0);
-        gutterRight.transform.position = new Vector3(_alleyInfo.laneWidthPerRow * row / 2, 0, 0);
-        lane = ShapeGenerator.GeneratePlane(PivotLocation.Center, _alleyInfo.laneDistance, _alleyInfo.laneWidthPerRow * row, 60, 2, Axis.Up);
+        gutterLeft = ShapeGenerator.GenerateArch(PivotLocation.Center, 180f, -_alleyInfo.gutterDepth , .1f, (_alleyInfo.laneDistance + _alleyInfo.extraLaneDepthPerRow), 20, false, true, false, false, true);
+        gutterRight = ShapeGenerator.GenerateArch(PivotLocation.Center, 180f, -_alleyInfo.gutterDepth, .1f, (_alleyInfo.laneDistance + _alleyInfo.extraLaneDepthPerRow), 20, false, true, false, false, true);
+        gutterLeft.transform.position = new Vector3(-GutterXLocation(numRows), -_alleyInfo.gutterDepth/2, 0);
+        gutterRight.transform.position = new Vector3(GutterXLocation(numRows), -_alleyInfo.gutterDepth/2, 0);
+        lane = ShapeGenerator.GeneratePlane(PivotLocation.Center, _alleyInfo.laneDistance, _alleyInfo.laneWidthPerRow * numRows, 60, 2, Axis.Up);
         lane.transform.position = new Vector3(0, 0, 0);
         
+    }
 
+    private float GutterXLocation(int numRows)
+    {
+        return (_alleyInfo.laneWidthPerRow * numRows + _alleyInfo.gutterWidth) / 2;
+    }
 
+    private void ApplyLaneMaterial()
+    {
+        gutterLeft.SetMaterial(gutterLeft.faces, gutter);
+        gutterRight.SetMaterial(gutterRight.faces, gutter);
+        lane.SetMaterial(lane.faces, gutter);
     }
 
     public void UpdateLane()

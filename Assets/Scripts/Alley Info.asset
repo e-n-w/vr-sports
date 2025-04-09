@@ -17,8 +17,8 @@ MonoBehaviour:
   extraLaneDepthPerRow: 8.5468
   gutterDepth: 1.875
   gutterWidth: 9.25
-  pinDistance: 12
-  orthogonalPinDistance: 0
-  scalar: 1
+  pinDistance: 0.48000002
+  orthogonalPinDistance: 0.4156922
+  pinSpaceScalar: 1
   numPlayers: 0
   numPins: 10

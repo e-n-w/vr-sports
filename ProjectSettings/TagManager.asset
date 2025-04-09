@@ -9,6 +9,8 @@ TagManager:
   - TennisNet
   - BowlingLane
   - BowlingBall
+  - LeftController
+  - RightController
   layers:
   - Default
   - TransparentFX
