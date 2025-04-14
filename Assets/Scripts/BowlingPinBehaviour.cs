@@ -54,6 +54,8 @@ public class BowlingPinBehaviour : MonoBehaviour
     {
         
         _objectRenderer.enabled = false;
+        Destroy(gameObject.GetComponent<Rigidbody>());
+        Destroy(gameObject.GetComponent<MeshCollider>());
 
         foreach (Rigidbody shard in shards)
         {

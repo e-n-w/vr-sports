@@ -50,27 +50,29 @@ public class BowlingPlayerFrameHistory : MonoBehaviour
         if (currentBowlInFrame == 1 && frames[currentFrame][1] + frames[currentFrame][0] == 10) return ScoreType.Spare;
         return ScoreType.Open;
     }
+
     private ScoreType CheckForStrikeOrSpare(List<int> inputFrame)
     {
         if (currentBowlInFrame == 0 && inputFrame[0] == _alleyInfo.numPins) return ScoreType.Strike;
         if (currentBowlInFrame > 0 && inputFrame[1] + inputFrame[0] == 10) return ScoreType.Spare;
         return ScoreType.Open;
     }
-    private int StrikeBonus(int rollIndex)
-    {
-        return rolls[rollIndex + 1] + rolls[rollIndex + 2];
-    }
+
+    //private int StrikeBonus(int rollIndex)
+    //{
+    //    return rolls[rollIndex + 1] + rolls[rollIndex + 2];
+    //}
 
     public static List<int> ScoreCumulative(List<int> rolls)
     {
         List<int> cumulativeScores = new List<int>();
         int runningTotal = 0;
 
-        foreach (int frameScore in ScoreFrames(rolls))
-        {
-            runningTotal += frameScore;
-            cumulativeScores.Add(runningTotal);
-        }
+        //foreach (int frameScore in ScoreFrames(rolls))
+        //{
+        //    runningTotal += frameScore;
+        //    cumulativeScores.Add(runningTotal);
+        //}
 
         return cumulativeScores;
     }
@@ -85,7 +87,7 @@ public class BowlingPlayerFrameHistory : MonoBehaviour
         {
             if (frames.Count == _alleyInfo.numFrames) break;            
 
-            // Normal "OPEN" frame
+            // OPEN frame
             if (rolls[i - 1] + rolls[i] < _alleyInfo.numPins) frames.Add(rolls[i - 1] + rolls[i]);
 
             // Makes sure there is another bowl to count
