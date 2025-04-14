@@ -2,28 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class TennisBall : MonoBehaviour
+public class TennisBall : NetworkBehaviour
 {
     [SerializeField]
     private TennisManager tennisManager;
-
-    public bool isInHand = true;
-    public bool hasBeenServed = false;
-
+    private List<TennisHit> previousHits = new();
     private Rigidbody rb;
 
-    public readonly float RacketCooldownBase = 250;
+    public bool hasBeenServed = false;
     private bool RacketCooldownActive = false;
 
-    private List<TennisHit> previousHits = new();
+    public readonly float RacketCooldownBase = 250;
 
-    private void Start()
-    {
-        rb = gameObject.GetComponent<Rigidbody>();
-    }
+    public static TennisBall Instance;
+
+    private void Awake() => rb = gameObject.GetComponent<Rigidbody>();
 
     private IEnumerator CoolDown()
     {
@@ -36,17 +33,7 @@ public class TennisBall : MonoBehaviour
     {
         if (!hasBeenServed)
         {
-            if (collision.gameObject.CompareTag("TennisRacket"))
-            {
-                previousHits.Add(new TennisHit(collision.gameObject.GetComponent<TennisRacket>().Player, HitSurface.Racket));
-                hasBeenServed = true;
-                StartCoroutine(CoolDown());
-                return;
-            }
-
-            // Return the ball to the serving player
-            tennisManager.ReturnBallToServer();
-
+            Name(collision);
             return;
         }
 
@@ -55,19 +42,18 @@ public class TennisBall : MonoBehaviour
             TennisPlayer scorer = GetLastHit(p => p.player.Id != GetLastHit().player.Id)?.player;
             tennisManager.ScorePoint(scorer, GetLastHit().player);
             previousHits = new List<TennisHit>();
+            return;
         }
-        else if (collision.gameObject.CompareTag("TennisRacket") || collision.gameObject.CompareTag("TennisCourt"))
+        
+        if (collision.gameObject.CompareTag("TennisRacket") || collision.gameObject.CompareTag("TennisCourt"))
         {
             bool wasRacket = collision.gameObject.CompareTag("TennisRacket");
-            if (wasRacket && RacketCooldownActive)
-            {
-                return;
-            }
+
+            if (wasRacket && RacketCooldownActive) return;
 
             TennisPlayer thisPlayer = wasRacket ? collision.gameObject.GetComponent<TennisRacket>().Player : collision.gameObject.GetComponent<TennisCourt>().AssociatedPlayer;
             TennisHit lastHit = GetLastHit();
 
-            Debug.Log($"{thisPlayer.Id} | {lastHit.player.Id}");
             if(lastHit.player.Id == thisPlayer.Id && (wasRacket && lastHit.hitSurface == HitSurface.Racket))
             {
                 tennisManager.ScorePoint(GetLastHit(p => p.player.Id != thisPlayer.Id)?.player, thisPlayer);
@@ -84,6 +70,14 @@ public class TennisBall : MonoBehaviour
         }
     }
 
+    void Name(Collision collision)
+    {
+        if(!collision.gameObject.CompareTag("TennisRacket")) { tennisManager.ReturnBallToServer();  return; }
+
+        previousHits.Add(new TennisHit(collision.gameObject.GetComponent<TennisRacket>().Player, HitSurface.Racket));
+        hasBeenServed = true;
+        StartCoroutine(CoolDown());
+    }
     private TennisHit GetLastHit(Func<TennisHit, bool> predicate)
     {
         try
@@ -103,13 +97,11 @@ public class TennisBall : MonoBehaviour
 
     public void OnSelected(SelectEnterEventArgs args)
     {
-        isInHand = true;
         rb.isKinematic = true;
     }
 
     public void OnDeselect(SelectExitEventArgs args)
     {
-        isInHand = false;
         rb.isKinematic = false;
     }
 }
