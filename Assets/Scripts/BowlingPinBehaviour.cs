@@ -19,6 +19,7 @@ public class BowlingPinBehaviour : MonoBehaviour
         _objectRenderer = GetComponent<MeshRenderer>();
         // Initialize shards as kinematic and hidden
         shards = GetComponentsInChildren<Rigidbody>(true);
+        Debug.Log(shards.Length);
         
         foreach (Rigidbody shard in shards)
         {
@@ -56,7 +57,7 @@ public class BowlingPinBehaviour : MonoBehaviour
 
         foreach (Rigidbody shard in shards)
         {
-            if (shard.transform == transform) continue;
+            //if (shard.transform == transform) continue;
             // Show the shard and enable physics
             shard.gameObject.SetActive(true);
             shard.GetComponent<Renderer>().enabled = true;

@@ -17,14 +17,14 @@ public class BowlingManager : MonoBehaviour
     [SerializeField] private Vector3 initialLanePosition = Vector3.zero;
     [SerializeField] private float laneDistance = 10f;
     private int numPlayers = 2;
-    private BowlingPlayerFrameHistory[] playerScore;
+    private BowlingPlayerFrameHistory playerScore;
     private ProBuilderMesh gutterLeft, gutterRight, lane;
     [SerializeField] private Material gutter;
 
 
     void Start()
     {
-        CreatePlayerFrameHistories();
+        CreatePlayerFrameHistory();
         
         InstantiatePins();
         ScalePinDistance();
@@ -46,13 +46,9 @@ public class BowlingManager : MonoBehaviour
     }
 
 
-    void CreatePlayerFrameHistories()
+    void CreatePlayerFrameHistory()
     {
-        playerScore = new BowlingPlayerFrameHistory[_alleyInfo.numPlayers];
-        for (int i = 0; i < _alleyInfo.numPlayers; i++)
-        {
-            playerScore[i] = new BowlingPlayerFrameHistory();
-        }
+        playerScore = new BowlingPlayerFrameHistory();
     }
  
     
