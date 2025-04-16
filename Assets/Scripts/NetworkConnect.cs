@@ -11,6 +11,7 @@ public class NetworkConnect : MonoBehaviour
     {
         NetworkManager.Singleton.StartHost();
         startButton.SetActive(true);
+        tennisManager.SetBallKinematic();
         HideButtons();
         Debug.Log("j");
     }
@@ -18,6 +19,7 @@ public class NetworkConnect : MonoBehaviour
     public void Join()
     {
         NetworkManager.Singleton.StartClient();
+        tennisManager.gameObject.SetActive(false);
         HideButtons();
     }
 

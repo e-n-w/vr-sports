@@ -7,6 +7,8 @@ public class NetworkPlayer : NetworkBehaviour
     public Transform head;
     public Transform leftHand;
     public Transform rightHand;
+    public Transform offset;
+    public Rigidbody racket;
 
     public Renderer[] meshToDisable;
 
@@ -17,7 +19,7 @@ public class NetworkPlayer : NetworkBehaviour
         {
             foreach (Renderer r in meshToDisable)
             {
-                r.enabled = false;
+                //r.enabled = false;
             }
         }
     }
@@ -44,6 +46,12 @@ public class NetworkPlayer : NetworkBehaviour
 
             rightHand.position = VRRigReferences.Singleton.rightHand.position;
             rightHand.rotation = VRRigReferences.Singleton.rightHand.rotation;
+
+            offset.position = rightHand.position;
+            offset.rotation = rightHand.rotation;
+
+            racket.MovePosition(offset.position);
+            racket.MoveRotation(offset.rotation);
         }
     }
 }

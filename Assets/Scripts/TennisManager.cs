@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using Unity.Netcode;
 
-public class TennisManager : MonoBehaviour
+public class TennisManager : NetworkBehaviour
 { 
     [SerializeField] private TennisBall ballScript;
     [SerializeField] private GameObject courtPrefab;
@@ -76,5 +77,10 @@ public class TennisManager : MonoBehaviour
         {
 
         }
+    }
+
+    public void SetBallKinematic()
+    {
+        ballScript.GetComponent<Rigidbody>().isKinematic = true;
     }
 }
