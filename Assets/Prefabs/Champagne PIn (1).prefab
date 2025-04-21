@@ -9167,7 +9167,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  explosionForce: 30
+  explosionForce: 100
   explosionRadius: 10
   upwardsModifier: 5
 --- !u!33 &91272270618990361

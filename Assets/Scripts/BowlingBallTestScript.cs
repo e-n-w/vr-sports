@@ -18,7 +18,7 @@ public class BowlingBallTestScript : MonoBehaviour
     private void Update()
     {
 
-        debugText.text = "X: "+transform.rotation.x+" | Y: "+transform.rotation.y+" | Z: "+transform.rotation.z;
+        debugText.text = "X: "+transform.eulerAngles.x+" | Y: "+transform.eulerAngles.y+" | Z: "+transform.eulerAngles.z;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             body.velocity = Vector3.zero;

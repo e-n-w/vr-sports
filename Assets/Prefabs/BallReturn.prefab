@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6705278223262464086}
   - component: {fileID: 1655073997519632790}
   - component: {fileID: 1288881863204890459}
+  - component: {fileID: 719707286165210247}
   m_Layer: 0
   m_Name: BallReturn
   m_TagString: Untagged
@@ -89,6 +90,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &719707286165210247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4028193943957127954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee819b1061e11124f9e8c2e1deb93a21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bowlingBallSockets: []
+  maxSockets: 4
 --- !u!1001 &1903612567535399357
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -156,6 +171,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Socket 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1367114238258036066, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectExited.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 719707286165210247}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4028193943957127954}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50394c729496ecf4e9df5fa7c542df6f, type: 3}
 --- !u!4 &785659212861134891 stripped
@@ -230,6 +260,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Socket 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectExited.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 719707286165210247}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 719707286165210247}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ActivateNextSocket
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50394c729496ecf4e9df5fa7c542df6f, type: 3}
@@ -306,6 +351,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Socket 3
       objectReference: {fileID: 0}
+    - target: {fileID: 1367114238258036066, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectExited.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 719707286165210247}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4028193943957127954}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50394c729496ecf4e9df5fa7c542df6f, type: 3}
 --- !u!4 &8218271889469135687 stripped
@@ -381,6 +441,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Socket 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1367114238258036066, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectExited.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 719707286165210247}
+    - target: {fileID: 2480774869657064926, guid: 50394c729496ecf4e9df5fa7c542df6f,
+        type: 3}
+      propertyPath: m_SelectEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4028193943957127954}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50394c729496ecf4e9df5fa7c542df6f, type: 3}
 --- !u!4 &8227228690986740453 stripped

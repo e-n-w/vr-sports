@@ -8,6 +8,7 @@ public class BowlingPinBehaviour : MonoBehaviour
     [SerializeField] private float explosionForce = .0000005f;
     [SerializeField] private float explosionRadius = .01f;
     [SerializeField] private float upwardsModifier = -1f;
+    [SerializeField] private int explosionThreshhold = 3, impactCounter;
     private MeshRenderer _objectRenderer;
     public bool isOnLane{ get; private set;}
     public bool isStanding { get; private set; }
@@ -19,7 +20,6 @@ public class BowlingPinBehaviour : MonoBehaviour
         _objectRenderer = GetComponent<MeshRenderer>();
         // Initialize shards as kinematic and hidden
         shards = GetComponentsInChildren<Rigidbody>(true);
-        Debug.Log(shards.Length);
         
         foreach (Rigidbody shard in shards)
         {
@@ -34,20 +34,18 @@ public class BowlingPinBehaviour : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
+        impactCounter++;
         if(other.CompareTag("BowlingLane") && isStanding)
         {
             Debug.Log("Fallen Over");
             isStanding = false;
-            Explode();
         }
+       if (impactCounter >= explosionThreshhold) Explode();
     }
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            Explode();
-        }
+        if (Input.GetKeyDown(KeyCode.LeftShift)) Explode();
     }
 
     public void Explode()
