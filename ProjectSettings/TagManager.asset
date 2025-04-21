@@ -7,6 +7,10 @@ TagManager:
   - TennisLava
   - TennisCourt
   - TennisNet
+  - BowlingLane
+  - BowlingBall
+  - LeftController
+  - RightController
   layers:
   - Default
   - TransparentFX

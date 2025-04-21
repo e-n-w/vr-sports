@@ -1,18 +1,76 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class BowlingPinBehaviour : MonoBehaviour
 {
-    private bool isStanding;
-    private bool isOnLane;
+      
+    [SerializeField] private Rigidbody[] shards;
+    [SerializeField] private float explosionForce = .0000005f;
+    [SerializeField] private float explosionRadius = .01f;
+    [SerializeField] private float upwardsModifier = -1f;
+    [SerializeField] private int explosionThreshhold = 3, impactCounter;
+    private MeshRenderer _objectRenderer;
+    public bool isOnLane{ get; private set;}
+    public bool isStanding { get; private set; }
+
     
-    public bool GetStandingStatus()
+    private void Start()
     {
-        return isStanding;
+        isStanding = true;
+        _objectRenderer = GetComponent<MeshRenderer>();
+        // Initialize shards as kinematic and hidden
+        shards = GetComponentsInChildren<Rigidbody>(true);
+        
+        foreach (Rigidbody shard in shards)
+        {
+            shard.isKinematic = true;
+            shard.GetComponent<Renderer>().enabled = false;
+        }
+        gameObject.AddComponent<Rigidbody>();
+        //Vector3 rotation = transform.eulerAngles;
+        //Vector3.Dot(rotation, Vector3.up);
     }
-    public bool GetLaneStatus()
+
+
+    public void OnTriggerEnter(Collider other)
     {
-        return isOnLane;
+        impactCounter++;
+        if(other.CompareTag("BowlingLane") && isStanding)
+        {
+            Debug.Log("Fallen Over");
+            isStanding = false;
+        }
+       if (impactCounter >= explosionThreshhold) Explode();
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift)) Explode();
+    }
+
+    public void Explode()
+    {
+        
+        _objectRenderer.enabled = false;
+        Destroy(gameObject.GetComponent<Rigidbody>());
+        Destroy(gameObject.GetComponent<MeshCollider>());
+
+        foreach (Rigidbody shard in shards)
+        {
+            //if (shard.transform == transform) continue;
+            // Show the shard and enable physics
+            shard.gameObject.SetActive(true);
+            shard.GetComponent<Renderer>().enabled = true;
+            shard.isKinematic = false;
+            // Apply explosion force from the object's center
+            shard.AddExplosionForce(
+                explosionForce,
+                transform.position,
+                explosionRadius,
+                upwardsModifier
+            );
+        }
     }
 }
+
+
